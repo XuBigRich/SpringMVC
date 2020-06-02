@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="oracle.jdbc.driver.OracleDriver">
+		</property>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl">
+		</property>
+		<property name="username" value="scott"></property>
+		<property name="password" value="tiger"></property>
+	</bean>
+	<bean id="sf"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.Oracle9Dialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingDirectoryLocations">
+			<list>
+				<value>/WEB-INF/classes/vo</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="empdao" class="dao.impl.IEmpDao">
+		<property name="sessionFactory">
+			<ref bean="sf"/>
+		</property>
+	</bean>
+	<bean id="deptdao" class="dao.impl.IDeptDao">
+		<property name="sessionFactory">
+			<ref bean="sf"/>
+		</property>
+	</bean>
+	
+	<bean id="url" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="emp.sw">empcontroller</prop>
+				<prop key="dept.sw">deptcontroller</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="empcontroller" class="controller.EmpController">
+		<property name="dao">
+			<ref bean="empdao"/>
+		</property>
+	</bean>
+	<bean id="deptcontroller" class="controller.DeptController">
+		<property name="dao">
+			<ref bean="deptdao"/>
+		</property>
+	</bean>
+	<bean id="vies" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+		
+	</beans>
